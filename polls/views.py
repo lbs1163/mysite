@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
@@ -41,3 +41,9 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def resultData(request, question_id):
+	question = get_object_or_404(Question, pk=question_id)
+	choices = question.choice_set.all()
+	votes = [choice.votes for choice in choices]
+	return JsonResponse({ 'votes': votes })
